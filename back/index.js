@@ -3,35 +3,21 @@ const app = express();
 const morgan = require('morgan');
 const path = require('path');
 const mysql = require('mysql');
-const myConnection = require('express-myconnection');
-const bbdd = require('./bbdd');
-
+const conn = require('./bbdd');
 
 //settings
 app.set('port',process.env.PORT || 4000);
-
 
 // Middleware
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
-app.use(myConnection(mysql,bbdd,'single'));
 
-
-// Variables globales
-app.use((req,res,next)=>{
-  next();
-})
+// set static folder
+app.use(express.static(path.join(__dirname,'../front')));
 
 //rutas
-/*
-app.use(require('./routes'));
-app.use(require('./routes/authentication'));
-app.use('links',require('./routes/links'));
-*/
-
-// public
-app.use(express.static(path.join(__dirname,'../front')));
+app.use(require('./routes/operations'));
 
 // Server start
 app.listen(app.get('port'), ()=>{
